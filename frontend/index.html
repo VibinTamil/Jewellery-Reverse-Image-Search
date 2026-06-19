@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlueStone Reverse Image Search</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f6f8fb;
+        color: #1a1a1a;
+      }
+
+      .container {
+        max-width: 860px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      h1 {
+        margin-bottom: 16px;
+        font-size: 32px;
+        text-align: center;
+      }
+
+      .card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .upload-form {
+        display: grid;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .upload-form label {
+        display: block;
+        font-weight: 600;
+      }
+
+      .upload-form input[type="file"] {
+        padding: 8px;
+      }
+
+      .upload-note {
+        color: #4b5563;
+        font-size: 14px;
+      }
+
+      .upload-form button {
+        width: fit-content;
+        background: #1f6feb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .upload-form button:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      .results {
+        display: grid;
+        gap: 18px;
+      }
+
+      .result-card {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 16px;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .result-card img {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 12px;
+        background: #f0f0f0;
+      }
+
+      .result-info {
+        display: grid;
+        gap: 10px;
+      }
+
+      .result-info h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .result-info p {
+        margin: 0;
+        color: #4b5563;
+      }
+
+      .result-info .match-label {
+        margin: 0;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .result-info .score {
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .result-info a {
+        color: #2563eb;
+        text-decoration: none;
+      }
+
+      .status {
+        margin-top: 12px;
+        font-size: 15px;
+        color: #374151;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>BlueStone Reverse Image Search</h1>
+        <form id="search-form" class="upload-form">
+          <label for="image-input">Upload an image to search for similar products</label>
+          <input id="image-input" type="file" accept="image/*" required />
+          <div class="upload-note">For best accuracy, upload a clear product-only image.</div>
+          <button id="search-button" type="submit">Search</button>
+          <div id="status" class="status"></div>
+        </form>
+      </div>
+
+      <div id="results" class="results"></div>
+    </div>
+
+    <script>
+      const API_URL = "http://127.0.0.1:8000"; // Change this to your deployed backend URL.
+      const form = document.getElementById("search-form");
+      const fileInput = document.getElementById("image-input");
+      const status = document.getElementById("status");
+      const results = document.getElementById("results");
+      const searchButton = document.getElementById("search-button");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const file = fileInput.files[0];
+        if (!file) {
+          status.textContent = "Please choose an image file.";
+          return;
+        }
+
+        status.textContent = "Uploading image and searching...";
+        searchButton.disabled = true;
+        results.innerHTML = "";
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch(`${API_URL}/search`, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || "Search request failed.");
+          }
+
+          const data = await response.json();
+          const items = data.results || [];
+
+          if (items.length === 0) {
+            status.textContent = "No similar products found.";
+          } else {
+            status.textContent = `Found ${items.length} similar products.`;
+            for (const item of items) {
+              const card = document.createElement("div");
+              card.className = "result-card";
+
+              const image = document.createElement("img");
+              image.src = item.image_url || "https://via.placeholder.com/160?text=No+Image";
+              image.alt = item.name;
+
+              const info = document.createElement("div");
+              info.className = "result-info";
+
+              const title = document.createElement("h2");
+              title.textContent = item.name;
+
+              const category = document.createElement("p");
+              category.textContent = `Category: ${item.category || "Unknown"}`;
+
+              const matchLabel = document.createElement("p");
+              matchLabel.className = "match-label";
+              matchLabel.textContent = item.match_label;
+
+              const score = document.createElement("p");
+              score.className = "score";
+              score.textContent = `Similarity: ${item.similarity_percent}%`;
+
+              const link = document.createElement("a");
+              link.href = item.product_url;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              link.textContent = "View product";
+
+              info.appendChild(title);
+              info.appendChild(category);
+              info.appendChild(matchLabel);
+              info.appendChild(score);
+              info.appendChild(link);
+
+              card.appendChild(image);
+              card.appendChild(info);
+              results.appendChild(card);
+            }
+          }
+        } catch (err) {
+          status.textContent = err.message;
+        } finally {
+          searchButton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
