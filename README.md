@@ -1,4 +1,4 @@
-# BlueStone Reverse Image Search
+# Jewellery Reverse Image Search
 
 A powerful reverse image search engine for jewelry products from BlueStone. Upload an image of jewelry and find similar products instantly using AI-powered image matching.
 
