@@ -1,16 +1,16 @@
 # Jewellery Reverse Image Search
 
-A powerful reverse image search engine for jewelry products from BlueStone. Upload an image of jewelry and find similar products instantly using AI-powered image matching.
+A powerful reverse image search engine for jewelry products. Upload an image of jewelry and find the most similar products in the database with similarity scores and direct product links.
 
 ## Overview
 
-This project combines web scraping, machine learning, and full-stack web development to create a complete reverse image search solution. It scrapes jewelry product data and images from BlueStone, generates AI embeddings using OpenAI's CLIP model, and provides a fast similarity search engine.
+This project combines web scraping, machine learning, and full-stack web development to create a complete reverse image search solution. It scrapes jewelry product data and images from the retailer website, generates AI embeddings using OpenAI's CLIP model, and provides a fast similarity search engine.
 
 Upload any jewelry image, and the system will find the most similar products in the database with similarity scores and direct product links.
 
 ## Features
 
-- **Automated Product Scraping**: Scrape jewelry products from BlueStone.com with pagination support for hundreds of products
+- **Automated Product Scraping**: Scrape jewelry products from the retailer website with pagination support for hundreds of products
 - **Image Download**: Download and store product images locally with validation and filtering
 - **CLIP Embeddings**: Generate high-quality image embeddings using OpenAI's CLIP vision model
 - **Fast Similarity Search**: Find similar products using cosine similarity on normalized embeddings
@@ -114,7 +114,7 @@ curl -X POST "http://127.0.0.1:8000/search" \
       "name": "Diamond Ring",
       "category": "Ring",
       "image_url": "https://...",
-      "product_url": "https://bluestone.com/...",
+      "product_url": "https://jewellery.com/...",
       "similarity_score": 0.92,
       "similarity_percent": 92.0,
       "match_label": "Highly Similar"
@@ -132,7 +132,7 @@ curl -X POST "http://127.0.0.1:8000/search" \
 3. Click "New +" and select "Web Service"
 4. Connect your GitHub repository
 5. Fill in the service settings:
-   - **Name**: bluestone-search-api
+   - **Name**: jewellery-search-api
    - **Region**: Choose closest to your users
    - **Branch**: main
    - **Build Command**: `pip install -r requirements.txt`
@@ -140,7 +140,7 @@ curl -X POST "http://127.0.0.1:8000/search" \
 6. Add environment variables if needed
 7. Click "Create Web Service"
 
-**Important**: You need to upload `bluestone.db` and the `data/` folder to Render as persistent files or add them to your repository.
+**Important**: You need to upload `jewellery.db` and the `data/` folder to Render as persistent files or add them to your repository.
 
 ### Vercel Frontend
 
@@ -160,12 +160,12 @@ curl -X POST "http://127.0.0.1:8000/search" \
 ## Project Structure
 
 ```
-BlueStone-Reverse-Image-Search/
+Jewellery-Reverse-Image-Search/
 ├── backend/
 │   ├── main.py                 # FastAPI application
 │   ├── database.py             # SQLite database helpers
 │   ├── scraper.py              # Web scraping functions
-│   ├── scrape_bluestone.py     # BlueStone dataset scraper
+│   ├── scrape_jewellery.py     # Jewellery dataset scraper
 │   ├── search_engine.py        # Similarity search logic
 │   ├── generate_embeddings.py  # CLIP embedding generation
 │   ├── download_product_images.py
@@ -176,7 +176,7 @@ BlueStone-Reverse-Image-Search/
 │   ├── images/                 # Downloaded product images
 │   ├── embeddings.npy          # CLIP embeddings
 │   └── product_ids.npy         # Product IDs for embeddings
-├── bluestone.db                # SQLite database
+├── jewellery.db                # SQLite database
 ├── requirements.txt            # Python dependencies
 ├── Procfile                    # Render deployment config
 ├── README.md                   # This file
@@ -195,7 +195,7 @@ const API_URL = "http://your-backend-url:8000";
 
 ### Database Location
 
-The database file (`bluestone.db`) is automatically resolved relative to the project root in `backend/database.py`.
+The database file (`jewellery.db`) is automatically resolved relative to the project root in `backend/database.py`.
 
 ### Embeddings Path
 
@@ -226,7 +226,7 @@ CLIP embeddings are loaded from `data/embeddings.npy` and `data/product_ids.npy`
 - For production, update CORS settings to match your domain
 
 ### Database locked error
-- Ensure no other process is using `bluestone.db`
+- Ensure no other process is using `jewellery.db`
 - Close any previous Python processes
 
 ## License

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATABASE_FILE = BASE_DIR / "bluestone.db"
+DATABASE_FILE = BASE_DIR / "jewellery.db"
 
 
 def create_connection(db_file: str = DATABASE_FILE) -> Connection:

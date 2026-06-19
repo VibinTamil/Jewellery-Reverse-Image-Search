@@ -105,7 +105,7 @@ def get_match_label(score: float) -> str:
 
 @app.get("/")
 def home():
-    return {"message": "BlueStone Reverse Image Search API"}
+    return {"message": "Jewellery Reverse Image Search API"}
 
 
 @app.get("/products")

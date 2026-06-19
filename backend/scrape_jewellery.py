@@ -329,5 +329,5 @@ def build_dataset() -> None:
 
 
 if __name__ == "__main__":
-    print("Starting BlueStone product dataset generation...")
+    print("Starting Jewellery product dataset generation...")
     build_dataset()

@@ -10,7 +10,7 @@ from database import insert_product, create_database, get_all_products, update_p
 
 # A simple User-Agent to include with requests so servers know who is requesting.
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (compatible; BlueStoneScraper/0.1; +https://example.com)"
+    "User-Agent": "Mozilla/5.0 (compatible; JewelleryScraper/0.1; +https://example.com)"
 }
 
 
@@ -73,8 +73,8 @@ def _extract_price(card) -> Optional[float]:
     return None
 
 
-def scrape_bluestone_category(category_name: str, listing_url: str, limit: int = 10) -> List[Dict[str, Optional[str]]]:
-    """Scrape up to `limit` products from a BlueStone listing page.
+def scrape_jewellery_category(category_name: str, listing_url: str, limit: int = 10) -> List[Dict[str, Optional[str]]]:
+    """Scrape up to `limit` products from a jewellery listing page.
 
     - Tries a few common product-card selectors and prints debug messages when selectors fail.
     - Inserts each product using `insert_product()`.
@@ -198,7 +198,7 @@ def extract_product_links(
     limit: int = 10,
     seen_urls: Optional[Set[str]] = None,
 ) -> int:
-    """Extract product links from a BlueStone listing page.
+    """Extract product links from a retailer listing page.
 
     - Removes query parameters from each URL first.
     - Filters links by category pattern.
@@ -276,7 +276,7 @@ def extract_product_links(
 
 
 def build_paginated_url(listing_url: str, page_number: int) -> str:
-    """Build a page URL for paginated BlueStone listings."""
+    """Build a page URL for paginated jewellery listings."""
     if page_number <= 1:
         return listing_url
     separator = "&" if "?" in listing_url else "?"
@@ -326,7 +326,7 @@ def scrape_category_pages(
 
 
 def scrape_product_details(product_url: str) -> Tuple[Optional[str], Optional[float]]:
-    """Scrape a BlueStone product detail page and extract image_url and price.
+    """Scrape a jewellery product detail page and extract image_url and price.
 
     - Tries to extract image URL from: img tag src, meta og:image, meta twitter:image
     - Tries to extract price from: meta product:price:amount, visible text
@@ -404,7 +404,7 @@ def update_missing_product_details(limit: int = 20) -> None:
     """Update image_url and price for products missing those details.
 
     - Gets all products from database.
-    - For each product where image_url is missing and product_url contains bluestone.com:
+    - For each product where image_url is missing and product_url contains the retailer domain:
       - Scrapes product detail page
       - Updates database
       - Prints result
@@ -424,7 +424,7 @@ def update_missing_product_details(limit: int = 20) -> None:
         product_url = prod.get("product_url")
         image_url = prod.get("image_url")
 
-        # Only process products with missing image_url and bluestone.com URL.
+        # Only process products with missing image_url and the retailer domain URL.
         if image_url or not product_url or "bluestone.com" not in product_url:
             continue
 
